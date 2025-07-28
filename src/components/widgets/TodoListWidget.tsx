@@ -99,7 +99,7 @@ export default function TodoListWidget() {
       )}
 
       {/* 투두 목록 */}
-      <div className="space-y-3 max-h-64 overflow-y-auto">
+      <div className="space-y-3 max-h-96 overflow-y-auto">
         {loading ? (
           <div className="text-center py-4">
             <div className="text-gray-500">로딩 중...</div>
@@ -115,7 +115,7 @@ export default function TodoListWidget() {
             </Link>
           </div>
         ) : (
-                     todos.slice(0, 6).map((todo) => (
+                     todos.slice(0, 12).map((todo) => (
              <div 
                key={todo.id} 
                className={`p-3 border rounded-lg transition-all duration-200 ${
@@ -165,13 +165,13 @@ export default function TodoListWidget() {
           ))
         )}
         
-        {todos.length > 6 && (
+        {todos.length > 12 && (
           <div className="text-center pt-2">
             <Link 
               href="/dashboard/todolist"
               className="text-blue-600 hover:text-blue-800 text-sm"
             >
-              +{todos.length - 6}개 더 보기
+              +{todos.length - 12}개 더 보기
             </Link>
           </div>
         )}
