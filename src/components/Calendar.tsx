@@ -98,10 +98,9 @@ export default function Calendar({
   const [editingEvent, setEditingEvent] = useState<number | null>(null);
   const [newEventDate, setNewEventDate] = useState<string | null>(null);
   const [newEventTitle, setNewEventTitle] = useState('');
-  
-  // 드래그 앤 드롭 상태
   const [draggedEvent, setDraggedEvent] = useState<CalendarEvent | null>(null);
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false); // 중복 저장 방지
 
   // 월의 첫 날과 마지막 날 계산
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -199,33 +198,46 @@ export default function Calendar({
 
   // 새 이벤트 저장
   const saveNewEvent = async () => {
+    // 중복 호출 방지
+    if (isSaving) {
+      console.log('이미 저장 중입니다. 중복 호출 방지');
+      return;
+    }
+
     if (!newEventTitle.trim() || !newEventDate) {
       console.log('저장 실패: 제목 또는 날짜 없음', { title: newEventTitle, date: newEventDate });
       return;
     }
 
+    setIsSaving(true);
     console.log('새 이벤트 저장 시도:', { title: newEventTitle.trim(), date: newEventDate });
 
-    const eventData = {
-      title: newEventTitle.trim(),
-      start_date: newEventDate,
-      is_all_day: true,
-      color: '#3B82F6',
-      category: '중요',
-      is_holiday: false,
-      calendar_type: calendarType,
-    };
+    try {
+      const eventData = {
+        title: newEventTitle.trim(),
+        start_date: newEventDate,
+        is_all_day: true,
+        color: '#3B82F6',
+        category: '중요',
+        is_holiday: false,
+        calendar_type: calendarType,
+      };
 
-    console.log('전송할 이벤트 데이터:', eventData);
-    const result = await onCreateEvent(eventData);
-    console.log('이벤트 생성 결과:', result);
-    
-    if (result) {
-      console.log('이벤트 저장 성공, 입력 필드 초기화');
-      setNewEventDate(null);
-      setNewEventTitle('');
-    } else {
-      console.log('이벤트 저장 실패');
+      console.log('전송할 이벤트 데이터:', eventData);
+      const result = await onCreateEvent(eventData);
+      console.log('이벤트 생성 결과:', result);
+      
+      if (result) {
+        console.log('이벤트 저장 성공, 입력 필드 초기화');
+        setNewEventDate(null);
+        setNewEventTitle('');
+      } else {
+        console.log('이벤트 저장 실패');
+      }
+    } catch (error) {
+      console.error('이벤트 저장 중 오류:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -475,6 +487,7 @@ export default function Calendar({
                     onKeyDown={(e) => {
                       e.stopPropagation(); // 키 이벤트 전파 방지
                       if (e.key === 'Enter') {
+                        e.preventDefault(); // 폼 제출 방지
                         saveNewEvent();
                       } else if (e.key === 'Escape') {
                         cancelNewEvent();
@@ -487,9 +500,10 @@ export default function Calendar({
                   <div className="flex space-x-1 mt-1">
                     <button
                       onClick={saveNewEvent}
-                      className="px-2 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition-colors shadow-sm"
+                      disabled={isSaving}
+                      className="px-2 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      저장
+                      {isSaving ? '저장 중...' : '저장'}
                     </button>
                     <button
                       onClick={cancelNewEvent}
