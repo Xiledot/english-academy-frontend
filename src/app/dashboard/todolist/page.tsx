@@ -563,7 +563,7 @@ export default function TodoListPage() {
                               if (e.key === 'Enter') {
                                 e.preventDefault();
                                 saveTodo(todo);
-                                e.currentTarget.blur();
+                                // e.currentTarget.blur(); // 중복 저장 방지를 위해 제거
                               }
                             }}
                             className={`w-full text-sm font-medium bg-transparent border-none p-0 focus:ring-0 ${
