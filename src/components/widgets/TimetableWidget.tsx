@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Widget from './Widget';
+import { apiGet } from '@/lib/api';
 
 interface TodayStudent {
   id: number | string;
@@ -20,11 +21,7 @@ export default function TodayStudentsWidget() {
   const fetchTodayStudents = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/students/today', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const response = await apiGet('/api/students/today');
       
       if (response.ok) {
         const data = await response.json();

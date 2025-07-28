@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
+import { apiPost } from '@/lib/api';
 
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<'director' | 'staff'>('staff');
@@ -20,15 +21,9 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          ...(loginType === 'director' && { password }),
-        }),
+      const response = await apiPost('/api/auth/login', {
+        name,
+        ...(loginType === 'director' && { password }),
       });
 
       const data = await response.json();
