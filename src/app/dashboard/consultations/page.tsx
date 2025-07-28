@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import ContentPopup from '@/components/ui/ContentPopup';
@@ -59,7 +59,7 @@ interface User {
   role: string;
 }
 
-export default function ConsultationsPage() {
+function ConsultationsContent() {
   const [user, setUser] = useState<User | null>(null);
   const [consultations, setConsultations] = useState<EditableConsultation[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -79,6 +79,7 @@ export default function ConsultationsPage() {
   } | null>(null);
   const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // 사이드패널에서 내용 저장
   const handleSidePanelSave = async (newText: string) => {
@@ -114,7 +115,6 @@ export default function ConsultationsPage() {
       console.error('저장 오류:', error);
     }
   };
-  const searchParams = useSearchParams();
   const inquiryId = searchParams.get('inquiry_id');
 
   // 로컬 스토리지에서 임시 데이터 복원
@@ -1311,5 +1311,13 @@ export default function ConsultationsPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function ConsultationsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ConsultationsContent />
+    </Suspense>
   );
 } 
