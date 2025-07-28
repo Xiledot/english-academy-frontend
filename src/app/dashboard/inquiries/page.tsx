@@ -57,7 +57,7 @@ export default function InquiriesPage() {
 
       const updatedInquiry = { ...inquiry, [selectedContent.field]: newText };
 
-      const response = await fetch(`http://localhost:3001/api/inquiries/${selectedContent.inquiryId}`, {
+      const response = await fetch(`/api/inquiries/${selectedContent.inquiryId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function InquiriesPage() {
         return;
       }
 
-      const response = await fetch(`http://localhost:3001/api/inquiries/${id}`, {
+      const response = await fetch(`/api/inquiries/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -136,7 +136,7 @@ export default function InquiriesPage() {
   const fetchInquiries = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/inquiries', {
+      const response = await fetch('/api/inquiries', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -187,7 +187,7 @@ export default function InquiriesPage() {
       
       if (inquiry.isNew) {
         // 새 문의 생성
-        const response = await fetch('http://localhost:3001/api/inquiries', {
+        const response = await fetch('/api/inquiries', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -213,7 +213,7 @@ export default function InquiriesPage() {
         }
       } else {
         // 기존 문의 수정
-        const response = await fetch(`http://localhost:3001/api/inquiries/${inquiry.id}`, {
+        const response = await fetch(`/api/inquiries/${inquiry.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

@@ -62,7 +62,7 @@ export default function WithdrawalsPage() {
 
       const updatedWithdrawal = { ...withdrawal, [selectedContent.field]: newText };
 
-      const response = await fetch(`http://localhost:3001/api/withdrawals/${selectedContent.withdrawalId}`, {
+      const response = await fetch(`/api/withdrawals/${selectedContent.withdrawalId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ export default function WithdrawalsPage() {
   const fetchWithdrawals = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/withdrawals', {
+      const response = await fetch('/api/withdrawals', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -265,7 +265,7 @@ export default function WithdrawalsPage() {
         };
         console.log('요청 본문:', requestBody);
         
-        const response = await fetch('http://localhost:3001/api/withdrawals', {
+        const response = await fetch('/api/withdrawals', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -304,7 +304,7 @@ export default function WithdrawalsPage() {
       } else {
         // 기존 퇴원 수정
         console.log('기존 퇴원 수정:', withdrawal.id, field, value);
-        const response = await fetch(`http://localhost:3001/api/withdrawals/${withdrawal.id}`, {
+        const response = await fetch(`/api/withdrawals/${withdrawal.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -385,7 +385,7 @@ export default function WithdrawalsPage() {
         };
         console.log('요청 본문:', requestBody);
         
-        const response = await fetch('http://localhost:3001/api/withdrawals', {
+        const response = await fetch('/api/withdrawals', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -424,7 +424,7 @@ export default function WithdrawalsPage() {
       } else {
         // 기존 퇴원 수정
         console.log('기존 퇴원 수정:', withdrawal.id, field, editingValue);
-        const response = await fetch(`http://localhost:3001/api/withdrawals/${withdrawal.id}`, {
+        const response = await fetch(`/api/withdrawals/${withdrawal.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -481,7 +481,7 @@ export default function WithdrawalsPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/withdrawals/${withdrawal.id}`, {
+      const response = await fetch(`/api/withdrawals/${withdrawal.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

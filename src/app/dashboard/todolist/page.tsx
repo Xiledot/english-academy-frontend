@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import { v4 as uuidv4 } from 'uuid';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api';
 
 interface TodoItem {
   id?: number;
@@ -74,12 +75,9 @@ export default function TodoListPage() {
   // 투두 목록 조회
   const fetchTodos = async () => {
     try {
-      const token = localStorage.getItem('token');
       console.log('투두 조회 시도:', selectedDate);
       
-      const response = await fetch(`http://localhost:3001/api/todos/date/${selectedDate}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiGet(`/api/todos/date/${selectedDate}`);
 
       console.log('투두 조회 응답 상태:', response.status);
 
@@ -104,7 +102,7 @@ export default function TodoListPage() {
       const token = localStorage.getItem('token');
       console.log('조례사항 조회 시도:', selectedDate);
       
-      const response = await fetch(`http://localhost:3001/api/todos/announcements/date/${selectedDate}`, {
+      const response = await fetch(`/api/todos/announcements/date/${selectedDate}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -127,7 +125,7 @@ export default function TodoListPage() {
   const fetchMemo = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/todos/memo/date/${selectedDate}`, {
+      const response = await fetch(`/api/todos/memo/date/${selectedDate}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -148,7 +146,7 @@ export default function TodoListPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/todos/users', {
+      const response = await fetch('/api/todos/users', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -204,7 +202,7 @@ export default function TodoListPage() {
         const { tempId, isNew, ...todoData } = todo;
         console.log('새 투두 저장 데이터:', todoData);
         
-        const response = await fetch('http://localhost:3001/api/todos', {
+        const response = await fetch('/api/todos', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -229,7 +227,7 @@ export default function TodoListPage() {
         const { isNew, tempId, ...todoData } = todo;
         console.log('기존 투두 업데이트 데이터:', todoData);
         
-        const response = await fetch(`http://localhost:3001/api/todos/${todo.id}`, {
+        const response = await fetch(`/api/todos/${todo.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -260,7 +258,7 @@ export default function TodoListPage() {
   const toggleTodoStatus = async (todoId: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/todos/${todoId}/toggle`, {
+      const response = await fetch(`/api/todos/${todoId}/toggle`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -288,7 +286,7 @@ export default function TodoListPage() {
         return;
       }
 
-      const response = await fetch(`http://localhost:3001/api/todos/${todo.id}`, {
+      const response = await fetch(`/api/todos/${todo.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -334,7 +332,7 @@ export default function TodoListPage() {
         const { tempId, isNew, ...announcementData } = announcement;
         console.log('새 조례사항 저장 데이터:', announcementData);
         
-        const response = await fetch('http://localhost:3001/api/todos/announcements', {
+        const response = await fetch('/api/todos/announcements', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -359,7 +357,7 @@ export default function TodoListPage() {
         const { isNew, tempId, ...announcementData } = announcement;
         console.log('기존 조례사항 업데이트 데이터:', announcementData);
         
-        const response = await fetch(`http://localhost:3001/api/todos/announcements/${announcement.id}`, {
+        const response = await fetch(`/api/todos/announcements/${announcement.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -398,7 +396,7 @@ export default function TodoListPage() {
         return;
       }
 
-      const response = await fetch(`http://localhost:3001/api/todos/announcements/${announcement.id}`, {
+      const response = await fetch(`/api/todos/announcements/${announcement.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -415,7 +413,7 @@ export default function TodoListPage() {
   const saveMemo = async (content: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/todos/memo/date/${selectedDate}`, {
+      const response = await fetch(`/api/todos/memo/date/${selectedDate}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -443,7 +441,7 @@ export default function TodoListPage() {
   const sendTodo = async (toUserId: number, title: string, description: string, priority: '높음' | '보통' | '낮음') => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/todos/send', {
+      const response = await fetch('/api/todos/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

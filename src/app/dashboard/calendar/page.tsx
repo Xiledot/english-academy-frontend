@@ -59,7 +59,7 @@ export default function CalendarPage() {
       const token = localStorage.getItem('token');
       console.log('🔑 조회용 토큰:', token ? `토큰 있음 (${token.substring(0, 20)}...)` : '토큰 없음');
       
-      const url = `http://localhost:3001/api/calendar/month/${year}/${month}?calendar_type=${type}`;
+      const url = `/api/calendar/month/${year}/${month}?calendar_type=${type}`;
       console.log('🌐 요청 URL:', url);
       
       const response = await fetch(url, {
@@ -107,7 +107,7 @@ export default function CalendarPage() {
       
       console.log('일정 생성 시도:', eventWithType);
       
-      const response = await fetch('http://localhost:3001/api/calendar/events', {
+      const response = await fetch('/api/calendar/events', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -138,7 +138,7 @@ export default function CalendarPage() {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`http://localhost:3001/api/calendar/events/${id}`, {
+      const response = await fetch(`/api/calendar/events/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -171,7 +171,7 @@ export default function CalendarPage() {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`http://localhost:3001/api/calendar/events/${id}`, {
+      const response = await fetch(`/api/calendar/events/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -88,7 +88,7 @@ export default function AttendanceTypeDetailPage() {
   const fetchAttendanceType = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/attendance/types`, {
+      const response = await fetch(`/api/attendance/types`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -106,7 +106,7 @@ export default function AttendanceTypeDetailPage() {
   const fetchSessions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/attendance/sessions?typeId=${typeId}`, {
+      const response = await fetch(`/api/attendance/sessions?typeId=${typeId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -125,7 +125,7 @@ export default function AttendanceTypeDetailPage() {
       const token = localStorage.getItem('token');
       console.log('📚 학생 목록 조회 시작:', { typeId, token: token ? '토큰 있음' : '토큰 없음' });
       
-      const response = await fetch(`http://localhost:3001/api/attendance/types/${typeId}/students`, {
+      const response = await fetch(`/api/attendance/types/${typeId}/students`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -153,7 +153,7 @@ export default function AttendanceTypeDetailPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/attendance/sessions', {
+      const response = await fetch('/api/attendance/sessions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ export default function AttendanceTypeDetailPage() {
   const deleteSession = async (sessionId: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/attendance/sessions/${sessionId}`, {
+      const response = await fetch(`/api/attendance/sessions/${sessionId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -215,7 +215,7 @@ export default function AttendanceTypeDetailPage() {
       
       console.log('👨‍🎓 학생 생성 요청 데이터:', studentData);
       
-      const response = await fetch('http://localhost:3001/api/attendance/students', {
+      const response = await fetch('/api/attendance/students', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -246,7 +246,7 @@ export default function AttendanceTypeDetailPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/attendance/students/${editingStudent.id}`, {
+      const response = await fetch(`/api/attendance/students/${editingStudent.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -338,7 +338,7 @@ export default function AttendanceTypeDetailPage() {
     try {
       const token = localStorage.getItem('token');
       const checkResponse = await fetch(
-        `http://localhost:3001/api/attendance/sessions/check-duplicate?typeId=${typeId}&sessionName=${classInfo.name}&dayOfWeek=${selectedSlot.day}&startTime=${classInfo.start_time}&studentName=${selectedSlot.student.name}`,
+        `/api/attendance/sessions/check-duplicate?typeId=${typeId}&sessionName=${classInfo.name}&dayOfWeek=${selectedSlot.day}&startTime=${classInfo.start_time}&studentName=${selectedSlot.student.name}`,
         {
           headers: { 'Authorization': `Bearer ${token}` }
         }
@@ -367,7 +367,7 @@ export default function AttendanceTypeDetailPage() {
       
       console.log('세션 생성 요청 데이터:', sessionData);
       
-      const response = await fetch('http://localhost:3001/api/attendance/sessions', {
+      const response = await fetch('/api/attendance/sessions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -92,7 +92,7 @@ function ConsultationsContent() {
 
       const updatedConsultation = { ...consultation, [selectedContent.field]: newText };
 
-      const response = await fetch(`http://localhost:3001/api/consultations/${selectedContent.consultationId}`, {
+      const response = await fetch(`/api/consultations/${selectedContent.consultationId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ function ConsultationsContent() {
   const fetchConsultations = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/consultations', {
+      const response = await fetch('/api/consultations', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -212,7 +212,7 @@ function ConsultationsContent() {
   const fetchInquiries = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/inquiries', {
+      const response = await fetch('/api/inquiries', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -230,7 +230,7 @@ function ConsultationsContent() {
   const fetchStudents = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/students', {
+      const response = await fetch('/api/students', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -359,7 +359,7 @@ function ConsultationsContent() {
         };
         console.log('요청 본문:', requestBody);
         
-        const response = await fetch('http://localhost:3001/api/consultations', {
+        const response = await fetch('/api/consultations', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -398,7 +398,7 @@ function ConsultationsContent() {
       } else {
         // 기존 상담 수정
         console.log('기존 상담 수정:', consultation.id, field, value);
-        const response = await fetch(`http://localhost:3001/api/consultations/${consultation.id}`, {
+        const response = await fetch(`/api/consultations/${consultation.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -495,7 +495,7 @@ function ConsultationsContent() {
         };
         console.log('요청 본문:', requestBody);
         
-        const response = await fetch('http://localhost:3001/api/consultations', {
+        const response = await fetch('/api/consultations', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -534,7 +534,7 @@ function ConsultationsContent() {
       } else {
         // 기존 상담 수정
         console.log('기존 상담 수정:', consultation.id, field, valueToSave);
-        const response = await fetch(`http://localhost:3001/api/consultations/${consultation.id}`, {
+        const response = await fetch(`/api/consultations/${consultation.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -604,7 +604,7 @@ function ConsultationsContent() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/consultations/${consultation.id}`, {
+      const response = await fetch(`/api/consultations/${consultation.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -644,7 +644,7 @@ function ConsultationsContent() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/consultations/${consultation.id}`, {
+      const response = await fetch(`/api/consultations/${consultation.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

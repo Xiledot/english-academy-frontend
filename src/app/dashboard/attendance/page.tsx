@@ -47,7 +47,7 @@ export default function AttendancePage() {
   const fetchAttendanceTypes = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/attendance/types', {
+      const response = await fetch('/api/attendance/types', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -64,7 +64,7 @@ export default function AttendancePage() {
   const fetchRecentSessions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/attendance/sessions', {
+      const response = await fetch('/api/attendance/sessions', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -85,7 +85,7 @@ export default function AttendancePage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/attendance/types', {
+      const response = await fetch('/api/attendance/types', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export default function AttendancePage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/attendance/types/${id}`, {
+      const response = await fetch(`/api/attendance/types/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

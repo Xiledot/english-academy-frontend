@@ -25,7 +25,7 @@ export default function StudentStatsWidget() {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/students/stats', {
+      const response = await fetch('/api/students/stats', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

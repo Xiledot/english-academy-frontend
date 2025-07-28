@@ -32,7 +32,7 @@ export default function UpcomingEventsWidget() {
   const fetchUpcomingEvents = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/calendar/upcoming?days=7', {
+      const response = await fetch('/api/calendar/upcoming?days=7', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

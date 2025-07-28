@@ -112,7 +112,7 @@ export default function AssistantWorkPage() {
       if (task.isNew) {
         // 새 업무 생성
         const { tempId, isNew, editing, ...taskData } = task;
-        const response = await fetch('http://localhost:3001/api/tasks', {
+        const response = await fetch('/api/tasks', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export default function AssistantWorkPage() {
       } else {
         // 기존 업무 수정
         const { isNew, editing, tempId, ...taskData } = task;
-        const response = await fetch(`http://localhost:3001/api/tasks/${task.id}`, {
+        const response = await fetch(`/api/tasks/${task.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ export default function AssistantWorkPage() {
         return;
       }
 
-      const response = await fetch(`http://localhost:3001/api/tasks/${id}`, {
+      const response = await fetch(`/api/tasks/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -218,7 +218,7 @@ export default function AssistantWorkPage() {
   const handleRecurringTaskSave = async (taskData: RecurringTaskData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/tasks/recurring', {
+      const response = await fetch('/api/tasks/recurring', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -246,7 +246,7 @@ export default function AssistantWorkPage() {
   const handleFixedTaskSave = async (taskData: FixedTaskData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/tasks/fixed', {
+      const response = await fetch('/api/tasks/fixed', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +274,7 @@ export default function AssistantWorkPage() {
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/tasks/date/${filterDate}`, {
+      const response = await fetch(`/api/tasks/date/${filterDate}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

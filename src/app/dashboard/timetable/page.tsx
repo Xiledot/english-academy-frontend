@@ -67,7 +67,7 @@ export default function TimetablePage() {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:3001/api/schedules', {
+      const response = await fetch('/api/schedules', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -164,7 +164,7 @@ export default function TimetablePage() {
       if (!token) return;
 
       // 기존 스케줄 삭제
-      await fetch(`http://localhost:3001/api/schedules/${draggedSchedule.id}`, {
+      await fetch(`/api/schedules/${draggedSchedule.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -172,7 +172,7 @@ export default function TimetablePage() {
       });
 
       // 새 위치에 스케줄 생성
-      const response = await fetch('http://localhost:3001/api/schedules', {
+      const response = await fetch('/api/schedules', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -238,7 +238,7 @@ export default function TimetablePage() {
           notes: editValue // 입력한 텍스트 그대로 저장
         };
 
-        const response = await fetch('http://localhost:3001/api/schedules', {
+        const response = await fetch('/api/schedules', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -258,7 +258,7 @@ export default function TimetablePage() {
         if (!editValue.trim()) {
           const existingSchedule = getScheduleForTimeSlot(editingCell.day + 1, editingCell.timeSlot);
           if (existingSchedule) {
-            await fetch(`http://localhost:3001/api/schedules/${existingSchedule.id}`, {
+            await fetch(`/api/schedules/${existingSchedule.id}`, {
               method: 'DELETE',
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -280,7 +280,7 @@ export default function TimetablePage() {
           notes: editValue // 원본 입력값 그대로 저장
         };
 
-        const response = await fetch('http://localhost:3001/api/schedules', {
+        const response = await fetch('/api/schedules', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

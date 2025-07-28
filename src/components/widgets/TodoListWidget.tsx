@@ -31,7 +31,7 @@ export default function TodoListWidget() {
   const fetchTodayTodos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/todos/date/${today}`, {
+      const response = await fetch(`/api/todos/date/${today}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -50,7 +50,7 @@ export default function TodoListWidget() {
   const toggleTodoStatus = async (todoId: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/todos/${todoId}/toggle`, {
+      const response = await fetch(`/api/todos/${todoId}/toggle`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });

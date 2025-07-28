@@ -47,7 +47,7 @@ export default function FullTimetablePage() {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:3001/api/schedules', {
+      const response = await fetch('/api/schedules', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -69,7 +69,7 @@ export default function FullTimetablePage() {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:3001/api/schedules/time-slots', {
+      const response = await fetch('/api/schedules/time-slots', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
