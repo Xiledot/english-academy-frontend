@@ -99,12 +99,9 @@ export default function TodoListPage() {
     if (user?.role !== 'director') return;
 
     try {
-      const token = localStorage.getItem('token');
       console.log('조례사항 조회 시도:', selectedDate);
       
-      const response = await fetch(`/api/todos/announcements/date/${selectedDate}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiGet(`/api/todos/announcements/date/${selectedDate}`);
 
       console.log('조례사항 조회 응답 상태:', response.status);
 
@@ -124,10 +121,7 @@ export default function TodoListPage() {
   // 메모 조회
   const fetchMemo = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/todos/memo/date/${selectedDate}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiGet(`/api/todos/memo/date/${selectedDate}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -145,10 +139,7 @@ export default function TodoListPage() {
     if (user?.role !== 'director' && user?.role !== 'vice_director') return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/todos/users', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiGet('/api/todos/users');
 
       if (response.ok) {
         const data = await response.json();
@@ -196,20 +187,11 @@ export default function TodoListPage() {
     console.log('투두 저장 시도:', todo);
 
     try {
-      const token = localStorage.getItem('token');
-      
       if (todo.isNew) {
         const { tempId, isNew, ...todoData } = todo;
         console.log('새 투두 저장 데이터:', todoData);
         
-        const response = await fetch('/api/todos', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(todoData)
-        });
+        const response = await apiPost('/api/todos', todoData);
 
         console.log('새 투두 저장 응답 상태:', response.status);
         
@@ -227,14 +209,7 @@ export default function TodoListPage() {
         const { isNew, tempId, ...todoData } = todo;
         console.log('기존 투두 업데이트 데이터:', todoData);
         
-        const response = await fetch(`/api/todos/${todo.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(todoData)
-        });
+        const response = await apiPut(`/api/todos/${todo.id}`, todoData);
 
         console.log('기존 투두 업데이트 응답 상태:', response.status);
 
@@ -257,11 +232,7 @@ export default function TodoListPage() {
   // 투두 상태 토글
   const toggleTodoStatus = async (todoId: number) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/todos/${todoId}/toggle`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiPatch(`/api/todos/${todoId}/toggle`);
 
       if (response.ok) {
         const updatedTodo = await response.json();
@@ -279,8 +250,6 @@ export default function TodoListPage() {
     if (!confirm('정말로 이 투두를 삭제하시겠습니까?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      
       if (todo.isNew) {
         setTodos(prev => prev.filter(t => t.tempId !== todo.tempId));
         return;
@@ -326,7 +295,7 @@ export default function TodoListPage() {
     console.log('조례사항 저장 시도:', announcement);
 
     try {
-      const token = localStorage.getItem('token');
+      
       
       if (announcement.isNew) {
         const { tempId, isNew, ...announcementData } = announcement;
@@ -389,7 +358,7 @@ export default function TodoListPage() {
     if (!confirm('정말로 이 조례사항을 삭제하시겠습니까?')) return;
 
     try {
-      const token = localStorage.getItem('token');
+      
       
       if (announcement.isNew) {
         setAnnouncements(prev => prev.filter(a => a.tempId !== announcement.tempId));
@@ -412,7 +381,7 @@ export default function TodoListPage() {
   // 메모 저장
   const saveMemo = async (content: string) => {
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch(`/api/todos/memo/date/${selectedDate}`, {
         method: 'PUT',
         headers: {
@@ -440,7 +409,7 @@ export default function TodoListPage() {
   // 투두 전송 (원장/부원장만)
   const sendTodo = async (toUserId: number, title: string, description: string, priority: '높음' | '보통' | '낮음') => {
     try {
-      const token = localStorage.getItem('token');
+      
       const response = await fetch('/api/todos/send', {
         method: 'POST',
         headers: {
@@ -471,7 +440,7 @@ export default function TodoListPage() {
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    
 
     if (!userStr || !token) {
       router.push('/login');
