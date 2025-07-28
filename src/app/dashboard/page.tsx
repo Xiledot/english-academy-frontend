@@ -121,7 +121,7 @@ export default function DashboardPage() {
               <div className="md:col-span-2">
                 <TodayStudentsWidget />
               </div>
-              <div className="row-span-2">
+              <div className="row-span-3">
                 <TodoListWidget />
               </div>
 
@@ -134,7 +134,7 @@ export default function DashboardPage() {
               </div>
 
               {/* 세 번째 행 */}
-              <div className="md:col-span-3">
+              <div className="md:col-span-2">
                 <UpcomingEventsWidget />
               </div>
             </div>
