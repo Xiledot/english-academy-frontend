@@ -255,10 +255,7 @@ export default function TodoListPage() {
         return;
       }
 
-      const response = await fetch(`/api/todos/${todo.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiDelete(`/api/todos/${todo.id}`);
 
       if (response.ok) {
         setTodos(prev => prev.filter(t => t.id !== todo.id));
@@ -301,14 +298,7 @@ export default function TodoListPage() {
         const { tempId, isNew, ...announcementData } = announcement;
         console.log('새 조례사항 저장 데이터:', announcementData);
         
-        const response = await fetch('/api/todos/announcements', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(announcementData)
-        });
+        const response = await apiPost('/api/todos/announcements', announcementData);
 
         console.log('새 조례사항 저장 응답 상태:', response.status);
 
@@ -326,14 +316,7 @@ export default function TodoListPage() {
         const { isNew, tempId, ...announcementData } = announcement;
         console.log('기존 조례사항 업데이트 데이터:', announcementData);
         
-        const response = await fetch(`/api/todos/announcements/${announcement.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(announcementData)
-        });
+        const response = await apiPut(`/api/todos/announcements/${announcement.id}`, announcementData);
 
         console.log('기존 조례사항 업데이트 응답 상태:', response.status);
 
@@ -358,17 +341,12 @@ export default function TodoListPage() {
     if (!confirm('정말로 이 조례사항을 삭제하시겠습니까?')) return;
 
     try {
-      
-      
       if (announcement.isNew) {
         setAnnouncements(prev => prev.filter(a => a.tempId !== announcement.tempId));
         return;
       }
 
-      const response = await fetch(`/api/todos/announcements/${announcement.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiDelete(`/api/todos/announcements/${announcement.id}`);
 
       if (response.ok) {
         setAnnouncements(prev => prev.filter(a => a.id !== announcement.id));
@@ -381,15 +359,7 @@ export default function TodoListPage() {
   // 메모 저장
   const saveMemo = async (content: string) => {
     try {
-      
-      const response = await fetch(`/api/todos/memo/date/${selectedDate}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ content })
-      });
+      const response = await apiPut(`/api/todos/memo/date/${selectedDate}`, { content });
 
       if (response.ok) {
         const savedMemo = await response.json();
@@ -409,20 +379,12 @@ export default function TodoListPage() {
   // 투두 전송 (원장/부원장만)
   const sendTodo = async (toUserId: number, title: string, description: string, priority: '높음' | '보통' | '낮음') => {
     try {
-      
-      const response = await fetch('/api/todos/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          toUserId,
-          targetDate: selectedDate,
-          title,
-          description,
-          priority
-        })
+      const response = await apiPost('/api/todos/send', {
+        toUserId,
+        targetDate: selectedDate,
+        title,
+        description,
+        priority
       });
 
       if (response.ok) {

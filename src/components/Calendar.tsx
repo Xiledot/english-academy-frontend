@@ -556,14 +556,14 @@ export default function Calendar({
                   {/* 이벤트 편집 메뉴 */}
                   {editingEvent === event.id && (
                     <>
-                      {/* 배경 오버레이 */}
+                      {/* 배경 오버레이 - 블러 처리된 반투명 배경 */}
                       <div 
-                        className="fixed inset-0 bg-black bg-opacity-25 z-40"
+                        className="fixed inset-0 bg-white/30 backdrop-blur-sm z-40"
                         onClick={() => setEditingEvent(null)}
                       />
                       {/* 팝업 */}
                       <div 
-                        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-4 min-w-[280px] max-w-[90vw] max-h-[80vh] overflow-y-auto"
+                        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white border border-gray-200 rounded-xl shadow-2xl p-4 min-w-[280px] max-w-[90vw] max-h-[80vh] overflow-y-auto backdrop-blur-md"
                         onClick={(e) => e.stopPropagation()} // 편집 메뉴 클릭 시 이벤트 전파 방지
                       >
                         <div className="space-y-3">
