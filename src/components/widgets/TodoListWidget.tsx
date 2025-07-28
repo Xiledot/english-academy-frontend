@@ -99,7 +99,7 @@ export default function TodoListWidget() {
       )}
 
       {/* 투두 목록 */}
-      <div className="space-y-3 max-h-96 overflow-y-auto">
+      <div className="space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
         {loading ? (
           <div className="text-center py-4">
             <div className="text-gray-500">로딩 중...</div>
