@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Calendar from '../../../components/Calendar';
 import Sidebar from '../../../components/Sidebar';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api';
 
 interface CalendarEvent {
   id?: number;
@@ -56,18 +57,10 @@ export default function CalendarPage() {
       
       console.log('📅 월별 일정 조회 시도:', { year, month, type });
       
-      const token = localStorage.getItem('token');
-      console.log('🔑 조회용 토큰:', token ? `토큰 있음 (${token.substring(0, 20)}...)` : '토큰 없음');
-      
       const url = `/api/calendar/month/${year}/${month}?calendar_type=${type}`;
       console.log('🌐 요청 URL:', url);
       
-      const response = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await apiGet(url);
 
       console.log('📡 응답 상태:', response.status);
       console.log('📡 응답 헤더:', response.headers);
@@ -98,8 +91,6 @@ export default function CalendarPage() {
   // 일정 생성
   const createEvent = async (eventData: Omit<CalendarEvent, 'id' | 'created_at' | 'updated_at' | 'created_by' | 'created_by_name'>) => {
     try {
-      const token = localStorage.getItem('token');
-      
       const eventWithType = {
         ...eventData,
         calendar_type: calendarType
@@ -107,14 +98,7 @@ export default function CalendarPage() {
       
       console.log('일정 생성 시도:', eventWithType);
       
-      const response = await fetch('/api/calendar/events', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(eventWithType),
-      });
+      const response = await apiPost('/api/calendar/events', eventWithType);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -136,16 +120,7 @@ export default function CalendarPage() {
   // 일정 수정
   const updateEvent = async (id: number, eventData: Partial<CalendarEvent>) => {
     try {
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`/api/calendar/events/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(eventData),
-      });
+      const response = await apiPut(`/api/calendar/events/${id}`, eventData);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -169,14 +144,7 @@ export default function CalendarPage() {
   // 일정 삭제
   const deleteEvent = async (id: number) => {
     try {
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`/api/calendar/events/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await apiDelete(`/api/calendar/events/${id}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -184,6 +152,7 @@ export default function CalendarPage() {
 
       // 현재 월의 일정을 다시 조회
       await fetchMonthEvents(currentDate, calendarType);
+      return true;
     } catch (error) {
       console.error('일정 삭제 실패:', error);
       throw error;
