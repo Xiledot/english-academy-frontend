@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import { v4 as uuidv4 } from 'uuid';
-import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api';
+import { apiGet, apiPost, apiPut, apiDelete, apiPatch } from '@/lib/api';
 
 interface TodoItem {
   id?: number;
@@ -442,7 +442,7 @@ export default function TodoListPage() {
     const userStr = localStorage.getItem('user');
     
 
-    if (!userStr || !token) {
+    if (!userStr) {
       router.push('/login');
       return;
     }
