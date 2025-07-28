@@ -102,6 +102,23 @@ export default function Calendar({
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false); // 중복 저장 방지
 
+  // 팝업 위치 계산 함수
+  const getPopupPosition = (eventId: number) => {
+    const eventElement = document.querySelector(`[data-event-id="${eventId}"]`);
+    if (!eventElement) return { top: 'top-full', left: 'left-0' };
+    
+    const rect = eventElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const popupHeight = 300; // 예상 팝업 높이
+    
+    // 하단 공간이 부족한 경우 위쪽에 표시
+    if (rect.bottom + popupHeight > viewportHeight) {
+      return { top: 'bottom-full', left: 'left-0' };
+    }
+    
+    return { top: 'top-full', left: 'left-0' };
+  };
+
   // 월의 첫 날과 마지막 날 계산
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -519,6 +536,7 @@ export default function Calendar({
               {eventsForDate.map((event) => (
                 <div key={event.id} className="relative mb-1">
                   <div
+                    data-event-id={event.id}
                     draggable
                     className="text-xs px-2 py-1 rounded-lg text-white cursor-move hover:opacity-90 transition-all duration-200 truncate shadow-sm hover:shadow-md transform hover:scale-105"
                     style={{ backgroundColor: event.color }}
@@ -537,7 +555,7 @@ export default function Calendar({
                   {/* 이벤트 편집 메뉴 */}
                   {editingEvent === event.id && (
                     <div 
-                      className="absolute top-full left-0 z-10 bg-white border border-gray-200 rounded-xl shadow-xl p-4 min-w-[220px] backdrop-blur-sm"
+                      className={`absolute ${getPopupPosition(event.id!).top} ${getPopupPosition(event.id!).left} z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-4 min-w-[220px] backdrop-blur-sm max-h-[80vh] overflow-y-auto`}
                       onClick={(e) => e.stopPropagation()} // 편집 메뉴 클릭 시 이벤트 전파 방지
                     >
                       <div className="space-y-3">
