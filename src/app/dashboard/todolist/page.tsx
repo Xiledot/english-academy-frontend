@@ -60,6 +60,7 @@ export default function TodoListPage() {
   const [showSendModal, setShowSendModal] = useState(false);
   const [selectedTodoForSend, setSelectedTodoForSend] = useState<TodoItem | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const [isSaving, setIsSaving] = useState(false); // 중복 저장 방지
   const router = useRouter();
 
   // 우선순위 색상
@@ -176,6 +177,12 @@ export default function TodoListPage() {
 
   // 투두 저장
   const saveTodo = async (todo: TodoItem) => {
+    // 중복 호출 방지
+    if (isSaving) {
+      console.log('이미 저장 중입니다. 중복 호출 방지');
+      return;
+    }
+
     // 제목이 비어있으면 삭제 처리
     if (!todo.title.trim()) {
       if (todo.isNew) {
@@ -184,6 +191,7 @@ export default function TodoListPage() {
       return;
     }
 
+    setIsSaving(true);
     console.log('투두 저장 시도:', todo);
 
     try {
@@ -226,6 +234,8 @@ export default function TodoListPage() {
       }
     } catch (error) {
       console.error('투두 저장 오류:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
