@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiGet, apiPatch } from '@/lib/api';
 
 interface TodoItem {
   id: number;
@@ -30,10 +31,7 @@ export default function TodoListWidget() {
   // 오늘의 투두 목록 조회
   const fetchTodayTodos = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/todos/date/${today}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiGet(`/api/todos/date/${today}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -49,11 +47,7 @@ export default function TodoListWidget() {
   // 투두 상태 토글
   const toggleTodoStatus = async (todoId: number) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/todos/${todoId}/toggle`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiPatch(`/api/todos/${todoId}/toggle`);
 
       if (response.ok) {
         const updatedTodo = await response.json();
