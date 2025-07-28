@@ -109,14 +109,15 @@ export default function Calendar({
     
     const rect = eventElement.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const popupHeight = 300; // 예상 팝업 높이
+    const popupHeight = 400; // 팝업 높이를 더 크게 예상
+    const margin = 20; // 여백
     
     // 하단 공간이 부족한 경우 위쪽에 표시
-    if (rect.bottom + popupHeight > viewportHeight) {
-      return { top: 'bottom-full', left: 'left-0' };
+    if (rect.bottom + popupHeight + margin > viewportHeight) {
+      return { top: 'bottom-full', left: 'left-0', transform: 'translateY(-10px)' };
     }
     
-    return { top: 'top-full', left: 'left-0' };
+    return { top: 'top-full', left: 'left-0', transform: 'translateY(10px)' };
   };
 
   // 월의 첫 날과 마지막 날 계산
@@ -554,54 +555,62 @@ export default function Calendar({
 
                   {/* 이벤트 편집 메뉴 */}
                   {editingEvent === event.id && (
-                    <div 
-                      className={`absolute ${getPopupPosition(event.id!).top} ${getPopupPosition(event.id!).left} z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-4 min-w-[220px] backdrop-blur-sm max-h-[80vh] overflow-y-auto`}
-                      onClick={(e) => e.stopPropagation()} // 편집 메뉴 클릭 시 이벤트 전파 방지
-                    >
-                      <div className="space-y-3">
-                        {/* 색상 선택 */}
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-700 mb-2">색상</label>
-                          <div className="grid grid-cols-6 gap-1">
-                            {colorOptions.map((color) => (
-                              <button
-                                key={color.value}
-                                onClick={() => changeEventColor(event, color.value)}
-                                className={`w-6 h-6 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
-                                  event.color === color.value ? 'border-gray-800 scale-110 shadow-md' : 'border-gray-300 hover:border-gray-500'
-                                }`}
-                                style={{ backgroundColor: color.value }}
-                                title={color.name}
-                              />
-                            ))}
+                    <>
+                      {/* 배경 오버레이 */}
+                      <div 
+                        className="fixed inset-0 bg-black bg-opacity-25 z-40"
+                        onClick={() => setEditingEvent(null)}
+                      />
+                      {/* 팝업 */}
+                      <div 
+                        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-4 min-w-[280px] max-w-[90vw] max-h-[80vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()} // 편집 메뉴 클릭 시 이벤트 전파 방지
+                      >
+                        <div className="space-y-3">
+                          {/* 색상 선택 */}
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-700 mb-2">색상</label>
+                            <div className="grid grid-cols-6 gap-1">
+                              {colorOptions.map((color) => (
+                                <button
+                                  key={color.value}
+                                  onClick={() => changeEventColor(event, color.value)}
+                                  className={`w-6 h-6 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
+                                    event.color === color.value ? 'border-gray-800 scale-110 shadow-md' : 'border-gray-300 hover:border-gray-500'
+                                  }`}
+                                  style={{ backgroundColor: color.value }}
+                                  title={color.name}
+                                />
+                              ))}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* 카테고리 선택 */}
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-700 mb-2">카테고리</label>
-                          <select
-                            value={event.category}
-                            onChange={(e) => changeEventCategory(event, e.target.value)}
-                            className="w-full text-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          {/* 카테고리 선택 */}
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-700 mb-2">카테고리</label>
+                            <select
+                              value={event.category}
+                              onChange={(e) => changeEventCategory(event, e.target.value)}
+                              className="w-full text-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                              {categoryOptions.map((category) => (
+                                <option key={category.value} value={category.value}>
+                                  {category.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* 삭제 버튼 */}
+                          <button
+                            onClick={() => handleDeleteEvent(event)}
+                            className="w-full px-3 py-2 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors font-medium"
                           >
-                            {categoryOptions.map((category) => (
-                              <option key={category.value} value={category.value}>
-                                {category.label}
-                              </option>
-                            ))}
-                          </select>
+                            삭제
+                          </button>
                         </div>
-
-                        {/* 삭제 버튼 */}
-                        <button
-                          onClick={() => handleDeleteEvent(event)}
-                          className="w-full px-3 py-2 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors font-medium"
-                        >
-                          삭제
-                        </button>
                       </div>
-                    </div>
+                    </>
                   )}
                 </div>
               ))}
