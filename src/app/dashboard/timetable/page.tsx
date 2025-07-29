@@ -242,7 +242,7 @@ export default function TimetablePage() {
         }
 
         const scheduleData = {
-          day_of_week: editingCell.day,
+          day_of_week: editingCell.day + 1, // 0부터 시작하는 인덱스를 1부터 시작하는 요일로 변환
           time_slot: editingCell.timeSlot,
           subject: getSubjectKey(subject),
           teacher_id: 1,
