@@ -203,6 +203,8 @@ export default function TimetablePage() {
     if (!editingCell) return;
 
     try {
+      console.log('시간표 저장 시작:', { editingCell, editValue });
+      
       // 특별 시간 행(dayIndex 6)인 경우 일반 텍스트로 저장
       if (editingCell.day === 6) {
         const scheduleData = {
@@ -214,7 +216,9 @@ export default function TimetablePage() {
           notes: editValue // 입력한 텍스트 그대로 저장
         };
 
+        console.log('특별 시간 저장 데이터:', scheduleData);
         const response = await apiPost('/api/schedules', scheduleData);
+        console.log('특별 시간 저장 응답:', response.status, response.ok);
 
         if (response.ok) {
           await fetchSchedules();
@@ -225,8 +229,10 @@ export default function TimetablePage() {
         
         // 공란으로 입력한 경우 기존 스케줄 삭제
         if (!editValue.trim()) {
+          console.log('공란 입력 - 기존 스케줄 삭제');
           const existingSchedule = getScheduleForTimeSlot(editingCell.day + 1, editingCell.timeSlot);
           if (existingSchedule) {
+            console.log('기존 스케줄 삭제:', existingSchedule.id);
             await apiDelete(`/api/schedules/${existingSchedule.id}`);
           }
           await fetchSchedules();
@@ -244,7 +250,9 @@ export default function TimetablePage() {
           notes: editValue // 원본 입력값 그대로 저장
         };
 
+        console.log('일반 요일 저장 데이터:', scheduleData);
         const response = await apiPost('/api/schedules', scheduleData);
+        console.log('일반 요일 저장 응답:', response.status, response.ok);
 
         if (response.ok) {
           await fetchSchedules();
