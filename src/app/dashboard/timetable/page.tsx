@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Sidebar from '@/components/Sidebar';
+import { apiGet, apiPost, apiDelete } from '@/lib/api';
 
 interface Schedule {
   id: number;
@@ -64,14 +65,7 @@ export default function TimetablePage() {
 
   const fetchSchedules = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const response = await fetch('/api/schedules', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiGet('/api/schedules');
 
       if (response.ok) {
         const data = await response.json();
@@ -160,33 +154,18 @@ export default function TimetablePage() {
     const targetDayDB = targetDay + 1; // 데이터베이스 인덱스로 변환
     
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
       // 기존 스케줄 삭제
-      await fetch(`/api/schedules/${draggedSchedule.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      await apiDelete(`/api/schedules/${draggedSchedule.id}`);
 
       // 새 위치에 스케줄 생성
-      const response = await fetch('/api/schedules', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          day_of_week: targetDayDB,
-          time_slot: targetTimeSlot,
-          subject: draggedSchedule.subject,
-          room: draggedSchedule.room || '',
-          notes: draggedSchedule.notes || '',
-          teacher_id: draggedSchedule.teacher_id,
-          student_ids: draggedSchedule.student_ids || []
-        })
+      const response = await apiPost('/api/schedules', {
+        day_of_week: targetDayDB,
+        time_slot: targetTimeSlot,
+        subject: draggedSchedule.subject,
+        room: draggedSchedule.room || '',
+        notes: draggedSchedule.notes || '',
+        teacher_id: draggedSchedule.teacher_id,
+        student_ids: draggedSchedule.student_ids || []
       });
 
       if (response.ok) {
@@ -224,9 +203,6 @@ export default function TimetablePage() {
     if (!editingCell) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
       // 특별 시간 행(dayIndex 6)인 경우 일반 텍스트로 저장
       if (editingCell.day === 6) {
         const scheduleData = {
@@ -238,14 +214,7 @@ export default function TimetablePage() {
           notes: editValue // 입력한 텍스트 그대로 저장
         };
 
-        const response = await fetch('/api/schedules', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(scheduleData)
-        });
+        const response = await apiPost('/api/schedules', scheduleData);
 
         if (response.ok) {
           await fetchSchedules();
@@ -258,12 +227,7 @@ export default function TimetablePage() {
         if (!editValue.trim()) {
           const existingSchedule = getScheduleForTimeSlot(editingCell.day + 1, editingCell.timeSlot);
           if (existingSchedule) {
-            await fetch(`/api/schedules/${existingSchedule.id}`, {
-              method: 'DELETE',
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            });
+            await apiDelete(`/api/schedules/${existingSchedule.id}`);
           }
           await fetchSchedules();
           setEditingCell(null);
@@ -280,14 +244,7 @@ export default function TimetablePage() {
           notes: editValue // 원본 입력값 그대로 저장
         };
 
-        const response = await fetch('/api/schedules', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(scheduleData)
-        });
+        const response = await apiPost('/api/schedules', scheduleData);
 
         if (response.ok) {
           await fetchSchedules();
