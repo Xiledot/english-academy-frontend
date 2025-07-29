@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiGet } from '@/lib/api';
 
 interface Announcement {
   id: number;
@@ -19,10 +20,7 @@ export default function AnnouncementWidget() {
   // 오늘의 조례사항 조회
   const fetchTodayAnnouncements = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/todos/announcements/date/${today}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await apiGet(`/api/todos/announcements/date/${today}`);
 
       if (response.ok) {
         const data = await response.json();
