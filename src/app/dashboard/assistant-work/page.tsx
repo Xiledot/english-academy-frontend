@@ -150,8 +150,6 @@ export default function AssistantWorkPage() {
     if (!confirm('정말로 이 업무를 삭제하시겠습니까?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      
       // 새로운 업무(id가 string인 경우)는 API 호출 없이 바로 삭제
       if (typeof id === 'string') {
         setTasks(prev => prev.filter(t => (t.tempId || t.id) !== id));
