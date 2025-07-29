@@ -36,95 +36,17 @@ export default function Sidebar({ userRole }: SidebarProps) {
     localStorage.setItem('expandedMenus', JSON.stringify(allMenus));
   }, [expandedMenus]);
 
-  const menuItems: MenuItem[] = [
-    {
-      id: 'dashboard',
-      label: '대시보드',
-      icon: '🏠',
-      href: '/dashboard',
-      roles: ['director', 'teacher', 'assistant', 'vice_director'],
-    },
-    {
-      id: 'learning',
-      label: '학습 관리',
-      icon: '📚',
-      roles: ['director', 'teacher', 'assistant', 'vice_director'],
-      children: [
-        { id: 'timetable', label: '시간표 관리', icon: '📅', href: '/dashboard/timetable', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-        { id: 'attendance', label: '출석부 관리', icon: '✅', href: '/dashboard/attendance', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-        { id: 'grades', label: '학생 성적 관리', icon: '📊', href: '/dashboard/grades', roles: ['director', 'teacher', 'vice_director'] },
-        { id: 'goals', label: '학생 목표/대학', icon: '🎯', href: '/dashboard/goals', roles: ['director', 'teacher', 'vice_director'] },
-        { id: 'roadmap', label: '학생 로드맵', icon: '🗺️', href: '/dashboard/roadmap', roles: ['director', 'teacher', 'vice_director'] },
-        { id: 'exam-scope', label: '학교 시험 범위', icon: '📖', href: '/dashboard/exam-scope', roles: ['director', 'teacher', 'vice_director'] },
-      ]
-    },
-    {
-      id: 'materials',
-      label: '내신 자료 제작',
-      icon: '📝',
-      roles: ['director', 'teacher', 'vice_director'],
-      children: [
-        { id: 'passages', label: '지문 라이브러리', icon: '📄', href: '/dashboard/passages', roles: ['director', 'teacher', 'vice_director'] },
-        { id: 'vocabulary', label: '단어 라이브러리', icon: '📚', href: '/dashboard/vocabulary', roles: ['director', 'teacher', 'vice_director'] },
-      ]
-    },
-    {
-      id: 'students',
-      label: '학생/상담 관리',
-      icon: '👥',
-      roles: ['director', 'teacher', 'assistant', 'vice_director'],
-      children: [
-        { id: 'student-info', label: '학생 정보 관리', icon: '👤', href: '/dashboard/students', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-        { id: 'inquiries', label: '유입 DB 관리', icon: '📥', href: '/dashboard/inquiries', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-        { id: 'counseling', label: '상담 DB 관리', icon: '📞', href: '/dashboard/consultations', roles: ['director', 'teacher', 'vice_director'] },
-        { id: 'withdrawals', label: '퇴원 DB 관리', icon: '📤', href: '/dashboard/withdrawals', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-        { id: 'authentication', label: '학생 인증 관리', icon: '🔐', href: '/dashboard/authentication', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-      ]
-    },
-    {
-      id: 'tests',
-      label: '테스트 관리',
-      icon: '🧠',
-      roles: ['director', 'teacher', 'vice_director'],
-      children: [
-        { id: 'vocabulary-test', label: '단어 테스트', icon: '📝', href: '/dashboard/vocabulary-test', roles: ['director', 'teacher', 'vice_director'] },
-      ]
-    },
-    {
-      id: 'work',
-      label: '업무 관리',
-      icon: '📋',
-      roles: ['director', 'assistant', 'vice_director'],
-      children: [
-        { id: 'assistant-work', label: '조교 업무 목록', icon: '📋', href: '/dashboard/assistant-work', roles: ['director', 'assistant', 'vice_director'] },
-        { id: 'attendance', label: '출석부 관리', icon: '✅', href: '/dashboard/attendance', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-      ]
-    },
-    {
-      id: 'analysis',
-      label: '분석/통계',
-      icon: '📊',
-      href: '/dashboard/analysis',
-      roles: ['director', 'vice_director'],
-    },
-    {
-      id: 'communication',
-      label: '소통',
-      icon: '💬',
-      roles: ['director', 'teacher', 'assistant', 'vice_director'],
-      children: [
-        { id: 'messages', label: '메시지', icon: '💬', href: '/dashboard/messages', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-        { id: 'todolist', label: '투두리스트', icon: '📝', href: '/dashboard/todolist', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-        { id: 'calendar', label: '캘린더', icon: '📅', href: '/dashboard/calendar', roles: ['director', 'teacher', 'assistant', 'vice_director'] },
-      ]
-    },
-    {
-      id: 'system',
-      label: '시스템 관리',
-      icon: '⚙️',
-      href: '/dashboard/system',
-      roles: ['director'],
-    },
+  const menuItems = [
+    { id: 'dashboard', label: '대시보드', icon: '📊', href: '/dashboard', roles: ['director', 'teacher', 'vice_director', 'assistant'] },
+    { id: 'students', label: '학생 관리', icon: '👥', href: '/dashboard/students', roles: ['director', 'teacher', 'vice_director'] },
+    { id: 'timetable', label: '시간표 관리', icon: '📅', href: '/dashboard/timetable', roles: ['director', 'teacher', 'vice_director'] },
+    { id: 'inquiries', label: '유입 DB', icon: '📝', href: '/dashboard/inquiries', roles: ['director', 'vice_director'] },
+    { id: 'consultations', label: '상담 DB', icon: '💬', href: '/dashboard/consultations', roles: ['director', 'vice_director'] },
+    { id: 'withdrawals', label: '퇴원 DB', icon: '🚪', href: '/dashboard/withdrawals', roles: ['director', 'vice_director'] },
+    { id: 'todolist', label: '투두리스트', icon: '✅', href: '/dashboard/todolist', roles: ['director', 'teacher', 'vice_director', 'assistant'] },
+    { id: 'assistant-work', label: '조교 업무', icon: '📋', href: '/dashboard/assistant-work', roles: ['director', 'teacher', 'vice_director', 'assistant'] },
+    { id: 'calendar', label: '캘린더', icon: '📆', href: '/dashboard/calendar', roles: ['director', 'teacher', 'vice_director', 'assistant'] },
+    { id: 'attendance', label: '출석부 관리', icon: '📋', href: '/dashboard/attendance', roles: ['director', 'teacher', 'vice_director', 'assistant'] },
   ];
 
   const toggleMenu = (menuId: string) => {
