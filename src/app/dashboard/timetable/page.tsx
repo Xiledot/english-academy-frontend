@@ -151,7 +151,7 @@ export default function TimetablePage() {
     
     if (!draggedSchedule) return;
 
-    const targetDayDB = targetDay + 1; // 데이터베이스 인덱스로 변환
+    const targetDayDB = targetDay; // 데이터베이스 인덱스로 변환
     
     try {
       // 기존 스케줄 삭제
@@ -179,7 +179,7 @@ export default function TimetablePage() {
   };
 
   const handleCellClick = (day: number, timeSlot: string) => {
-    const schedule = getScheduleForTimeSlot(day + 1, timeSlot);
+    const schedule = getScheduleForTimeSlot(day, timeSlot);
     setEditingCell({ day, timeSlot });
     
     if (schedule) {
@@ -230,7 +230,7 @@ export default function TimetablePage() {
         // 공란으로 입력한 경우 기존 스케줄 삭제
         if (!editValue.trim()) {
           console.log('공란 입력 - 기존 스케줄 삭제');
-          const existingSchedule = getScheduleForTimeSlot(editingCell.day + 1, editingCell.timeSlot);
+          const existingSchedule = getScheduleForTimeSlot(editingCell.day, editingCell.timeSlot);
           if (existingSchedule) {
             console.log('기존 스케줄 삭제:', existingSchedule.id);
             await apiDelete(`/api/schedules/${existingSchedule.id}`);
@@ -242,7 +242,7 @@ export default function TimetablePage() {
         }
 
         const scheduleData = {
-          day_of_week: editingCell.day + 1,
+          day_of_week: editingCell.day,
           time_slot: editingCell.timeSlot,
           subject: getSubjectKey(subject),
           teacher_id: 1,
@@ -425,7 +425,7 @@ export default function TimetablePage() {
                         )}
                       </td>
                       {DAYS.slice(0, 5).map((day, dayIndex) => {
-                        const schedule = getScheduleForTimeSlot(dayIndex + 1, timeSlot);
+                        const schedule = getScheduleForTimeSlot(dayIndex, timeSlot);
                         const isEditing = editingCell?.day === dayIndex && editingCell?.timeSlot === timeSlot;
                         const isDragOver = draggedSchedule && draggedSchedule.id !== schedule?.id;
                         
@@ -506,7 +506,7 @@ export default function TimetablePage() {
                       <td 
                         className={`border border-gray-300 px-4 py-3 text-sm cursor-pointer transition-colors ${
                           (() => {
-                            const schedule = getScheduleForTimeSlot(6, timeSlot); // day_of_week 6은 토요일
+                            const schedule = getScheduleForTimeSlot(5, timeSlot); // day_of_week 5는 토요일
                             const isEditing = editingCell?.day === 5 && editingCell?.timeSlot === timeSlot;
                             const isDragOver = draggedSchedule && draggedSchedule.id !== schedule?.id;
                             
@@ -520,7 +520,7 @@ export default function TimetablePage() {
                         onDrop={(e) => handleDrop(e, 5, timeSlot)}
                       >
                         {(() => {
-                          const schedule = getScheduleForTimeSlot(6, timeSlot); // day_of_week 6은 토요일
+                          const schedule = getScheduleForTimeSlot(5, timeSlot); // day_of_week 5는 토요일
                           const isEditing = editingCell?.day === 5 && editingCell?.timeSlot === timeSlot;
                           
                           if (isEditing) {
