@@ -79,8 +79,10 @@ export default function TimetablePage() {
   };
 
   const getScheduleForTimeSlot = (day: number, timeSlot: string) => {
+    // day는 프론트엔드 인덱스(0-4), 데이터베이스는 1-5
+    const dayOfWeek = day + 1;
     return schedules.find(schedule => 
-      schedule.day_of_week === day && schedule.time_slot === timeSlot
+      schedule.day_of_week === dayOfWeek && schedule.time_slot === timeSlot
     );
   };
 
@@ -151,7 +153,7 @@ export default function TimetablePage() {
     
     if (!draggedSchedule) return;
 
-    const targetDayDB = targetDay; // 데이터베이스 인덱스로 변환
+    const targetDayDB = targetDay + 1; // 프론트엔드 인덱스를 데이터베이스 요일로 변환
     
     try {
       // 기존 스케줄 삭제
