@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import { v4 as uuidv4 } from 'uuid';
 import RecurringTaskModal, { RecurringTaskData } from '@/components/ui/RecurringTaskModal';
 import FixedTaskModal, { FixedTaskData } from '@/components/ui/FixedTaskModal';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/lib/api';
 
 interface Task {
   id?: number;
@@ -107,19 +108,10 @@ export default function AssistantWorkPage() {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      
       if (task.isNew) {
         // 새 업무 생성
         const { tempId, isNew, editing, ...taskData } = task;
-        const response = await fetch('/api/tasks', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(taskData)
-        });
+        const response = await apiPost('/tasks', taskData);
 
         if (response.ok) {
           const savedTask = await response.json();
@@ -134,14 +126,7 @@ export default function AssistantWorkPage() {
       } else {
         // 기존 업무 수정
         const { isNew, editing, tempId, ...taskData } = task;
-        const response = await fetch(`/api/tasks/${task.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(taskData)
-        });
+        const response = await apiPut(`/tasks/${task.id}`, taskData);
 
         if (response.ok) {
           const updatedTask = await response.json();
@@ -173,12 +158,7 @@ export default function AssistantWorkPage() {
         return;
       }
 
-      const response = await fetch(`/api/tasks/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiDelete(`/tasks/${id}`);
 
       if (response.ok) {
         setTasks(prev => prev.filter(t => t.id !== id));
@@ -217,15 +197,7 @@ export default function AssistantWorkPage() {
   // 반복 업무 생성
   const handleRecurringTaskSave = async (taskData: RecurringTaskData) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/tasks/recurring', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(taskData)
-      });
+      const response = await apiPost('/tasks/recurring', taskData);
 
       if (response.ok) {
         const result = await response.json();
@@ -245,15 +217,7 @@ export default function AssistantWorkPage() {
   // 고정 업무 생성
   const handleFixedTaskSave = async (taskData: FixedTaskData) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/tasks/fixed', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(taskData)
-      });
+      const response = await apiPost('/tasks/fixed', taskData);
 
       if (response.ok) {
         const result = await response.json();
@@ -273,12 +237,7 @@ export default function AssistantWorkPage() {
   // 업무 목록 조회
   const fetchTasks = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/tasks/date/${filterDate}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiGet(`/tasks/date/${filterDate}`);
 
       if (response.ok) {
         const data = await response.json();
