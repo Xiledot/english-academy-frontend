@@ -313,10 +313,9 @@ export default function TimetablePage() {
     }
   };
 
-  // 커스텀 시간대 로드
+  // 커스텀 시간대 로드 - 기본 시간대만 사용
   const getTimeSlots = (): string[] => {
-    const savedTimeSlots = localStorage.getItem('customTimeSlots');
-    return savedTimeSlots ? JSON.parse(savedTimeSlots) : TIME_SLOTS;
+    return TIME_SLOTS; // 항상 기본 시간대 사용
   };
 
   const getSubjectColor = (subject: string) => {
@@ -506,7 +505,7 @@ export default function TimetablePage() {
                       <td 
                         className={`border border-gray-300 px-4 py-3 text-sm cursor-pointer transition-colors ${
                           (() => {
-                            const schedule = getScheduleForTimeSlot(5, timeSlot); // day_of_week 5는 토요일
+                            const schedule = getScheduleForTimeSlot(6, timeSlot); // day_of_week 6은 토요일
                             const isEditing = editingCell?.day === 5 && editingCell?.timeSlot === timeSlot;
                             const isDragOver = draggedSchedule && draggedSchedule.id !== schedule?.id;
                             
@@ -520,7 +519,7 @@ export default function TimetablePage() {
                         onDrop={(e) => handleDrop(e, 5, timeSlot)}
                       >
                         {(() => {
-                          const schedule = getScheduleForTimeSlot(5, timeSlot); // day_of_week 5는 토요일
+                          const schedule = getScheduleForTimeSlot(6, timeSlot); // day_of_week 6은 토요일
                           const isEditing = editingCell?.day === 5 && editingCell?.timeSlot === timeSlot;
                           
                           if (isEditing) {
