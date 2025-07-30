@@ -86,19 +86,21 @@ function ConsultationsContent() {
     if (!selectedContent?.consultationId || !selectedContent?.field) return;
 
     try {
-      const token = localStorage.getItem('token');
       const consultation = consultations.find(c => c.id === selectedContent.consultationId);
       if (!consultation) return;
 
-      const updatedConsultation = { ...consultation, [selectedContent.field]: newText };
+      // 업데이트할 필드만 포함하는 객체 생성
+      const updateData = {
+        [selectedContent.field]: newText
+      };
 
       const response = await fetch(`/api/consultations/${selectedContent.consultationId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(updatedConsultation)
+        body: JSON.stringify(updateData)
       });
 
       if (response.ok) {
@@ -110,6 +112,8 @@ function ConsultationsContent() {
         
         // 사이드패널 내용도 업데이트
         setSelectedContent(prev => prev ? { ...prev, text: newText } : null);
+      } else {
+        console.error('저장 실패:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('저장 오류:', error);
