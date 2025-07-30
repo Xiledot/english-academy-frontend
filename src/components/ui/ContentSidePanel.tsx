@@ -155,12 +155,13 @@ export default function ContentSidePanel({
                 <textarea
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
-                  className="w-full h-96 p-3 border border-gray-300 rounded-lg resize-y focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full p-3 border border-gray-300 rounded-lg resize-y focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  style={{ height: '480px' }}
                   placeholder="내용을 입력하세요..."
                   autoFocus
                 />
               ) : (
-                <div className="whitespace-pre-wrap text-gray-900 leading-relaxed max-h-96 overflow-y-auto">
+                <div className="whitespace-pre-wrap text-gray-900 leading-relaxed overflow-y-auto" style={{ maxHeight: '480px' }}>
                   {content.text || '내용이 없습니다.'}
                 </div>
               )}
