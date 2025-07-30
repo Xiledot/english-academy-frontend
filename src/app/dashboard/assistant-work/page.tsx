@@ -111,7 +111,7 @@ export default function AssistantWorkPage() {
       if (task.isNew) {
         // 새 업무 생성
         const { tempId, isNew, editing, ...taskData } = task;
-        const response = await apiPost('/tasks', taskData);
+        const response = await apiPost('/api/tasks', taskData);
 
         if (response.ok) {
           const savedTask = await response.json();
@@ -126,7 +126,7 @@ export default function AssistantWorkPage() {
       } else {
         // 기존 업무 수정
         const { isNew, editing, tempId, ...taskData } = task;
-        const response = await apiPut(`/tasks/${task.id}`, taskData);
+        const response = await apiPut(`/api/tasks/${task.id}`, taskData);
 
         if (response.ok) {
           const updatedTask = await response.json();
@@ -156,7 +156,7 @@ export default function AssistantWorkPage() {
         return;
       }
 
-      const response = await apiDelete(`/tasks/${id}`);
+      const response = await apiDelete(`/api/tasks/${id}`);
 
       if (response.ok) {
         setTasks(prev => prev.filter(t => t.id !== id));
@@ -195,7 +195,7 @@ export default function AssistantWorkPage() {
   // 반복 업무 생성
   const handleRecurringTaskSave = async (taskData: RecurringTaskData) => {
     try {
-      const response = await apiPost('/tasks/recurring', taskData);
+      const response = await apiPost('/api/tasks/recurring', taskData);
 
       if (response.ok) {
         const result = await response.json();
@@ -215,7 +215,7 @@ export default function AssistantWorkPage() {
   // 고정 업무 생성
   const handleFixedTaskSave = async (taskData: FixedTaskData) => {
     try {
-      const response = await apiPost('/tasks/fixed', taskData);
+      const response = await apiPost('/api/tasks/fixed', taskData);
 
       if (response.ok) {
         const result = await response.json();
@@ -235,7 +235,7 @@ export default function AssistantWorkPage() {
   // 업무 목록 조회
   const fetchTasks = async () => {
     try {
-      const response = await apiGet(`/tasks/date/${filterDate}`);
+      const response = await apiGet(`/api/tasks/date/${filterDate}`);
 
       if (response.ok) {
         const data = await response.json();
