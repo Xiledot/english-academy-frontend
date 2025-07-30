@@ -255,10 +255,10 @@ function ConsultationsContent() {
   }
 
   return (
-          <div className="flex h-screen bg-gray-50">
-        <Sidebar userRole="admin" />
-        
-        <div className="flex-1 flex flex-col">
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar userRole="admin" />
+      
+      <div className="flex-1 flex flex-col">
         {/* 헤더 */}
         <div className="bg-white shadow-sm border-b px-6 py-4">
           <div className="flex justify-between items-center">
@@ -360,22 +360,22 @@ function ConsultationsContent() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 사이드패널 */}
-      {sidePanelOpen && selectedContent && (
-        <ContentSidePanel
-          isOpen={sidePanelOpen}
-          onClose={() => setSidePanelOpen(false)}
-          content={{
-            title: selectedContent.title,
-            text: selectedContent.text,
-            metadata: {}
-          }}
-          isEditable={true}
-          onSave={handleSidePanelSave}
-        />
-      )}
+        {/* 사이드패널 */}
+        {sidePanelOpen && selectedContent && (
+          <ContentSidePanel
+            isOpen={sidePanelOpen}
+            onClose={() => setSidePanelOpen(false)}
+            content={{
+              title: selectedContent.title,
+              text: selectedContent.text,
+              metadata: {}
+            }}
+            isEditable={true}
+            onSave={handleSidePanelSave}
+          />
+        )}
+      </div>
     </div>
   );
 }
