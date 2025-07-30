@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import ContentPopup from '@/components/ui/ContentPopup';
 import ContentSidePanel from '@/components/ui/ContentSidePanel';
+import { apiGet, apiPut } from '@/lib/api';
 
 interface Consultation {
   id: number;
@@ -94,14 +95,7 @@ function ConsultationsContent() {
         [selectedContent.field]: newText
       };
 
-      const response = await fetch(`/api/consultations/${selectedContent.consultationId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(updateData)
-      });
+      const response = await apiPut(`/api/consultations/${selectedContent.consultationId}`, updateData);
 
       if (response.ok) {
         setConsultations(prev => prev.map(c => 
@@ -182,12 +176,7 @@ function ConsultationsContent() {
 
   const fetchConsultations = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/consultations', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiGet('/api/consultations');
 
       if (response.ok) {
         const data = await response.json();
@@ -215,12 +204,7 @@ function ConsultationsContent() {
 
   const fetchInquiries = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/inquiries', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiGet('/api/inquiries');
 
       if (response.ok) {
         const data = await response.json();
@@ -233,12 +217,7 @@ function ConsultationsContent() {
 
   const fetchStudents = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/students', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiGet('/api/students');
 
       if (response.ok) {
         const data = await response.json();
