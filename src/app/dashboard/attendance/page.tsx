@@ -1,146 +1,130 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Sidebar from '../../../components/Sidebar';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Sidebar from '@/components/Sidebar';
+import { apiGet } from '@/lib/api';
 
-interface AttendanceType {
+interface AttendanceCategory {
   id: number;
   name: string;
   description?: string;
-  color: string;
-  is_active: boolean;
   created_at: string;
-  updated_at: string;
 }
 
-interface AttendanceSession {
+interface AttendanceGroup {
   id: number;
-  type_id: number;
-  type_name?: string;
-  type_color?: string;
-  session_name: string;
-  day_of_week?: string; // 요일 기반으로 변경
-  start_time?: string;
-  end_time?: string;
-  teacher_name?: string;
-  notes?: string;
-  created_by: number;
+  category_id: number;
+  name: string;
+  description?: string;
+  year?: number;
+  semester?: number;
+  exam_type?: string;
+  round_number?: number;
+  month?: number;
   created_at: string;
-  updated_at: string;
-  student_count?: number;
+  category_name?: string;
 }
 
 export default function AttendancePage() {
-  const [attendanceTypes, setAttendanceTypes] = useState<AttendanceType[]>([]);
-  const [recentSessions, setRecentSessions] = useState<AttendanceSession[]>([]);
+  const [categories, setCategories] = useState<AttendanceCategory[]>([]);
+  const [groups, setGroups] = useState<{ [key: number]: AttendanceGroup[] }>({});
+  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [showNewTypeForm, setShowNewTypeForm] = useState(false);
-  const [newTypeName, setNewTypeName] = useState('');
-  const [newTypeDescription, setNewTypeDescription] = useState('');
-  const [newTypeColor, setNewTypeColor] = useState('#3B82F6');
+  const router = useRouter();
 
   useEffect(() => {
-    fetchAttendanceTypes();
-    fetchRecentSessions();
+    fetchCategories();
   }, []);
 
-  const fetchAttendanceTypes = async () => {
+  const fetchCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/attendance/types', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await apiGet('/api/newAttendance/categories');
       if (response.ok) {
-        const data = await response.json();
-        setAttendanceTypes(data);
+        const categoriesData = await response.json();
+        setCategories(categoriesData);
+        // 첫 번째 카테고리를 자동으로 확장
+        if (categoriesData.length > 0) {
+          toggleCategory(categoriesData[0].id);
+        }
       }
     } catch (error) {
-      console.error('출석부 유형 조회 오류:', error);
-    }
-  };
-
-  const fetchRecentSessions = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/attendance/sessions', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setRecentSessions(data.slice(0, 5)); // 최근 5개만
-      }
-    } catch (error) {
-      console.error('최근 세션 조회 오류:', error);
+      console.error('카테고리 조회 오류:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const createAttendanceType = async () => {
-    if (!newTypeName.trim()) return;
-
+  const fetchGroups = async (categoryId: number) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/attendance/types', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name: newTypeName.trim(),
-          description: newTypeDescription.trim() || undefined,
-          color: newTypeColor,
-        }),
-      });
-
+      const response = await apiGet(`/api/newAttendance/categories/${categoryId}/groups`);
       if (response.ok) {
-        setNewTypeName('');
-        setNewTypeDescription('');
-        setNewTypeColor('#3B82F6');
-        setShowNewTypeForm(false);
-        fetchAttendanceTypes();
+        const groupsData = await response.json();
+        setGroups(prev => ({
+          ...prev,
+          [categoryId]: groupsData
+        }));
       }
     } catch (error) {
-      console.error('출석부 유형 생성 오류:', error);
+      console.error('그룹 조회 오류:', error);
     }
   };
 
-  const deleteAttendanceType = async (id: number) => {
-    if (!confirm('이 출석부 유형을 삭제하시겠습니까?')) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/attendance/types/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        fetchAttendanceTypes();
+  const toggleCategory = (categoryId: number) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId);
+    } else {
+      newExpanded.add(categoryId);
+      // 그룹이 아직 로드되지 않았다면 로드
+      if (!groups[categoryId]) {
+        fetchGroups(categoryId);
       }
-    } catch (error) {
-      console.error('출석부 유형 삭제 오류:', error);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  const handleGroupClick = (groupId: number, groupName: string) => {
+    router.push(`/dashboard/attendance/groups/${groupId}?name=${encodeURIComponent(groupName)}`);
+  };
+
+  const getCategoryIcon = (categoryName: string) => {
+    switch (categoryName) {
+      case '월간평가': return '📊';
+      case '서킷 모의고사': return '🔄';
+      case '최종 파이널': return '🎯';
+      case '예비고사': return '📚';
+      default: return '📋';
     }
   };
 
-  const handleTypeClick = (typeId: number) => {
-    window.location.href = `/dashboard/attendance/${typeId}`;
+  const getGroupDisplayInfo = (group: AttendanceGroup) => {
+    const { category_name, name, year, month, semester, exam_type, round_number } = group;
+    
+    let additionalInfo = '';
+    if (category_name === '월간평가' && year && month) {
+      additionalInfo = `${year}년 ${month}월`;
+    } else if (category_name === '서킷 모의고사' && round_number) {
+      additionalInfo = `${round_number}회차`;
+    } else if (category_name === '최종 파이널' && round_number) {
+      additionalInfo = `${round_number}회차`;
+    } else if (category_name === '예비고사' && year && semester && exam_type) {
+      additionalInfo = `${year}학년도 ${semester}학기 ${exam_type}`;
+    }
+
+    return { name, additionalInfo };
   };
 
   if (loading) {
     return (
-      <div className="flex h-screen">
+      <div className="min-h-screen bg-gray-50 flex">
         <Sidebar userRole="director" />
-        <div className="flex-1 p-6">
-          <div className="flex items-center justify-center h-full">
-            <div className="text-lg">로딩 중...</div>
+        <div className="flex-1 p-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">출석부 데이터를 불러오는 중...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -148,178 +132,128 @@ export default function AttendancePage() {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="min-h-screen bg-gray-50 flex">
       <Sidebar userRole="director" />
-      <div className="flex-1 p-6 overflow-y-auto">
-        <div className="max-w-6xl mx-auto">
-          {/* 헤더 */}
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">출석부 관리</h1>
-            <button
-              onClick={() => setShowNewTypeForm(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              + 새 출석부 유형 추가
-            </button>
-          </div>
+      <div className="flex-1 p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">출석부 관리</h1>
+          <p className="text-gray-600">계층적 출석부 시스템으로 체계적인 출석 관리를 제공합니다.</p>
+        </div>
 
-          {/* 새 출석부 유형 추가 폼 */}
-          {showNewTypeForm && (
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6 border">
-              <h2 className="text-xl font-semibold mb-4">새 출석부 유형 추가</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    유형명 *
-                  </label>
-                  <input
-                    type="text"
-                    value={newTypeName}
-                    onChange={(e) => setNewTypeName(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="예: 교시제, 자율자습 등"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    설명
-                  </label>
-                  <input
-                    type="text"
-                    value={newTypeDescription}
-                    onChange={(e) => setNewTypeDescription(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="출석부 유형 설명"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    색상
-                  </label>
-                  <input
-                    type="color"
-                    value={newTypeColor}
-                    onChange={(e) => setNewTypeColor(e.target.value)}
-                    className="w-full h-10 p-1 border border-gray-300 rounded-md"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={createAttendanceType}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  추가
-                </button>
-                <button
-                  onClick={() => {
-                    setShowNewTypeForm(false);
-                    setNewTypeName('');
-                    setNewTypeDescription('');
-                    setNewTypeColor('#3B82F6');
-                  }}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-                >
-                  취소
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* 출석부 유형 목록 */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">출석부 유형</h2>
-            <div className="space-y-3">
-              {attendanceTypes.map((type) => (
-                <div
-                  key={type.id}
-                  onClick={() => handleTypeClick(type.id)}
-                  className="bg-white rounded-lg shadow-md p-6 border-l-4 hover:shadow-lg transition-shadow cursor-pointer"
-                  style={{ borderLeftColor: type.color }}
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-4">
-                      <div
-                        className="w-4 h-4 rounded-full"
-                        style={{ backgroundColor: type.color }}
-                      ></div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{type.name}</h3>
-                        {type.description && (
-                          <p className="text-gray-600 text-sm mt-1">{type.description}</p>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6">
+            <div className="space-y-4">
+              {categories.map((category) => (
+                <div key={category.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                  {/* 카테고리 헤더 */}
+                  <button
+                    onClick={() => toggleCategory(category.id)}
+                    className="w-full px-6 py-4 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">{getCategoryIcon(category.name)}</span>
+                      <div className="text-left">
+                        <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+                        {category.description && (
+                          <p className="text-sm text-gray-600">{category.description}</p>
                         )}
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteAttendanceType(type.id);
-                        }}
-                        className="text-red-600 hover:text-red-800 p-2"
-                        title="삭제"
+                      {groups[category.id] && (
+                        <span className="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                          {groups[category.id].length}개 그룹
+                        </span>
+                      )}
+                      <svg 
+                        className={`w-5 h-5 transition-transform ${expandedCategories.has(category.id) ? 'rotate-180' : ''}`}
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
                       >
-                        🗑️
-                      </button>
-                      <div className="text-blue-600 text-sm">
-                        클릭하여 관리 →
-                      </div>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </div>
-                  </div>
+                  </button>
+
+                  {/* 그룹 목록 */}
+                  {expandedCategories.has(category.id) && (
+                    <div className="border-t border-gray-200">
+                      {groups[category.id] ? (
+                        groups[category.id].length > 0 ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6">
+                            {groups[category.id].map((group) => {
+                              const { name, additionalInfo } = getGroupDisplayInfo(group);
+                              return (
+                                <button
+                                  key={group.id}
+                                  onClick={() => handleGroupClick(group.id, group.name)}
+                                  className="p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left group"
+                                >
+                                  <div className="flex items-center justify-between mb-2">
+                                    <h4 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                                      {name}
+                                    </h4>
+                                    <svg 
+                                      className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" 
+                                      fill="none" 
+                                      stroke="currentColor" 
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  </div>
+                                  {additionalInfo && (
+                                    <p className="text-sm text-gray-600">{additionalInfo}</p>
+                                  )}
+                                  <div className="mt-3 flex items-center text-xs text-gray-500">
+                                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    {new Date(group.created_at).toLocaleDateString('ko-KR')}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="p-6 text-center text-gray-500">
+                            <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p>이 카테고리에는 아직 그룹이 없습니다.</p>
+                          </div>
+                        )
+                      ) : (
+                        <div className="p-6 text-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                          <p className="mt-2 text-gray-600">그룹을 불러오는 중...</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-
-            {attendanceTypes.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <div className="text-6xl mb-4">📋</div>
-                <p className="text-lg">등록된 출석부 유형이 없습니다.</p>
-                <p className="text-sm">새 출석부 유형을 추가해보세요!</p>
-              </div>
-            )}
           </div>
+        </div>
 
-          {/* 최근 출석부 세션 */}
-          {recentSessions.length > 0 && (
+        {/* 하단 정보 */}
+        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="flex items-start space-x-3">
+            <svg className="w-6 h-6 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             <div>
-              <h2 className="text-2xl font-semibold mb-4">최근 출석부 세션</h2>
-              <div className="space-y-3">
-                {recentSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="bg-white rounded-lg shadow-md p-4 border-l-4"
-                    style={{ borderLeftColor: session.type_color }}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <span
-                            className="px-2 py-1 rounded-full text-xs font-medium text-white"
-                            style={{ backgroundColor: session.type_color }}
-                          >
-                            {session.type_name}
-                          </span>
-                          <h3 className="text-lg font-medium">{session.session_name}</h3>
-                        </div>
-                        <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
-                          <span>📅 {session.day_of_week || '매주'}</span>
-                          {session.start_time && <span>🕐 {session.start_time}</span>}
-                          {session.teacher_name && <span>👨‍🏫 {session.teacher_name}</span>}
-                          <span>👥 {session.student_count || 0}명</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => window.location.href = `/dashboard/attendance/session/${session.id}`}
-                        className="text-blue-600 hover:text-blue-800 text-sm"
-                      >
-                        관리 →
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">출석부 시스템 안내</h3>
+              <div className="text-blue-800 space-y-1">
+                <p>• <strong>월간평가:</strong> 매월 진행되는 정기 평가의 출석 관리</p>
+                <p>• <strong>서킷 모의고사:</strong> 13~22회차 서킷 모의고사 출석 관리</p>
+                <p>• <strong>최종 파이널:</strong> 1~20회차 최종 파이널 모의고사 출석 관리</p>
+                <p>• <strong>예비고사:</strong> 학기별 중간고사/기말고사 학교별 출석 관리</p>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
