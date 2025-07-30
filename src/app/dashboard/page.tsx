@@ -9,6 +9,7 @@ import NotificationsWidget from '@/components/widgets/NotificationsWidget';
 import TodoListWidget from '@/components/widgets/TodoListWidget';
 import AnnouncementWidget from '@/components/widgets/AnnouncementWidget';
 import UpcomingEventsWidget from '@/components/widgets/UpcomingEventsWidget';
+import AssistantTasksWidget from '@/components/widgets/AssistantTasksWidget';
 
 interface User {
   id: number;
@@ -136,6 +137,11 @@ export default function DashboardPage() {
               {/* 세 번째 행 */}
               <div className="md:col-span-2">
                 <UpcomingEventsWidget />
+              </div>
+
+              {/* 네 번째 행 - 조교 업무 */}
+              <div className="md:col-span-3">
+                <AssistantTasksWidget />
               </div>
             </div>
           </div>
